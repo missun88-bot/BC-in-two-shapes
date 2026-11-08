@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Big land, few people: where British Columbians live</title>
+<meta name="description" content="Most British Columbians live on a sliver of the province. Two maps built from the same 1,000 blocks show land area versus population. By Iris Sun.">
+<meta name="author" content="Iris Sun">
+<style>
+:root{color-scheme:light;--bg:#faf6ee;--ink:#1d3a2f;--mute:#667568;--line:#e4dcc9;--accent:#d94f30;--teal:#2a8f86;--card:#fffdf8;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;line-height:1.55}
+.wrap{max-width:1180px;margin:0 auto;padding:0 22px}
+.narrow{max-width:760px;margin-left:auto;margin-right:auto}
+.kicker{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);font-weight:700;margin:0 0 14px}
+header.hero{padding:54px 0 26px}
+h1{font-family:Georgia,"Times New Roman",serif;font-weight:700;font-size:clamp(34px,6vw,68px);line-height:1.04;margin:0 0 18px;letter-spacing:-.01em;max-width:900px}
+h1 em{font-style:normal;color:var(--accent)}
+.sub{font-size:clamp(17px,2.1vw,22px);color:#34493e;max-width:760px;margin:0 0 6px}
+.byline{font-size:13px;color:var(--mute);margin-top:14px}
+.byline b{color:var(--ink)}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px;margin:30px 0 8px}
+.stat{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px 18px}
+.stat .n{font-family:Georgia,serif;font-size:clamp(34px,4.4vw,48px);font-weight:700;line-height:1;color:var(--accent)}
+.stat.t .n{color:var(--teal)}
+.stat p{margin:8px 0 0;font-size:14px;color:#34493e}
+section{padding:34px 0}
+h2{font-family:Georgia,serif;font-size:clamp(25px,3.2vw,36px);line-height:1.15;margin:0 0 10px}
+.lede{color:#34493e;font-size:17px;margin:0 0 18px;max-width:760px}
+.row{display:flex;align-items:flex-start;gap:12px}
+.panel{min-width:0;text-align:center}
+.panel h3{margin:0 0 4px;font-size:clamp(18px,2.3vw,26px);font-weight:700}
+.panel .sub2{font-style:italic;color:var(--mute);font-size:clamp(12px,1.35vw,15px);margin:0}
+.panel .tot{color:var(--mute);font-size:12px;margin:2px 0 10px}
+canvas{width:100%;height:auto;display:block}
+.arrow{flex:0 0 34px;align-self:center;font-size:32px;color:var(--ink);text-align:center;margin-top:50px}
+.maphint{font-size:13px;color:var(--mute);text-align:center;margin:10px 0 0}
+.prose p{font-size:17px;margin:0 0 16px}
+.prose b{color:var(--accent)}
+.chapters{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:22px;margin-top:6px}
+.chapters h4{font-family:Georgia,serif;font-size:21px;margin:0 0 6px}
+.chapters p{margin:0;font-size:15.5px;color:#34493e}
+.slopebox{overflow-x:auto;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 8px}
+#slope{display:block;min-width:820px;width:100%;height:auto}
+#slope.phone{min-width:0}
+@media(max-width:760px){.slopebox{overflow-x:visible;padding:8px 4px}#slope g[data-i]{-webkit-tap-highlight-color:transparent}}
+#slope g[data-i]{cursor:default;transition:opacity .15s}
+.key{display:flex;gap:18px;flex-wrap:wrap;font-size:13px;color:#34493e;margin:0 0 10px}
+.key i{display:inline-block;width:22px;height:3px;vertical-align:middle;margin-right:7px;border-radius:2px}
+.tablebox{overflow-x:auto;border:1px solid var(--line);border-radius:12px;background:var(--card)}
+table{border-collapse:collapse;width:100%;font-size:13.5px;min-width:760px}
+th,td{padding:7px 10px;text-align:right;border-bottom:1px solid var(--line);white-space:nowrap}
+th:first-child,td:first-child{text-align:left}
+th{color:var(--mute);font-weight:600;cursor:pointer;user-select:none;background:#f6f0e2}
+th.s::after{content:" ▾";color:var(--accent)}
+tr.on td{background:#f2ead6}
+.sw{display:inline-block;width:11px;height:11px;margin-right:7px;vertical-align:-1px;border:1px solid rgba(0,0,0,.35)}
+.small{font-size:13px;color:var(--mute)}
+.notes{font-size:13.5px;color:#4b5d51}
+.notes li{margin-bottom:6px}
+footer{background:var(--ink);color:#e9efe9;margin-top:40px;padding:42px 0 34px}
+footer .explain{margin:0 0 34px;padding-bottom:30px;border-bottom:1px solid rgba(255,255,255,.16)}
+footer .explain h3{font-family:Georgia,serif;font-size:clamp(22px,2.6vw,28px);color:#fff;margin:0 0 6px}
+footer .explain .intro{max-width:760px;margin:0 0 18px;color:#d6e2d9}
+footer .xgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:20px}
+footer .xgrid h4{margin:0 0 4px;font-size:14px;letter-spacing:.04em;text-transform:uppercase;color:#ffb29b}
+footer .xgrid p{margin:0;font-size:14.5px;color:#cfdbd2;line-height:1.55}
+footer .by{font-family:Georgia,serif;font-size:clamp(26px,3.4vw,38px);font-weight:700;color:#fff;margin:0 0 4px}
+footer .by span{color:#ff9a7a}
+footer p{margin:6px 0;font-size:15px;color:#cfdbd2}
+footer .cta{margin-top:14px;font-size:15px}
+footer a{color:#ffb29b;font-weight:600}
+footer .challenge{display:inline-block;margin:18px 0 0;padding:8px 14px;border:1px solid rgba(255,178,155,.55);border-radius:999px;font-size:14px;color:#fff;background:rgba(255,138,92,.12)}
+footer .challenge b{color:#ffb29b}
+footer .fine{margin-top:22px;font-size:12px;color:#9db2a4;border-top:1px solid rgba(255,255,255,.14);padding-top:14px}
+#tip{position:fixed;pointer-events:none;background:#1d3a2f;color:#fff;padding:7px 10px;border-radius:6px;font-size:13px;display:none;z-index:9;line-height:1.4;box-shadow:0 4px 14px rgba(0,0,0,.25)}
+@media(max-width:760px){.row{flex-direction:column;align-items:stretch}.arrow{transform:rotate(90deg);margin:0}.panel{width:100% !important}}
+</style>
+</head>
+<body>
+<header class="hero"><div class="wrap">
+ <p class="kicker">British Columbia in blocks</p>
+ <h1>Big land, few people. <em>Small land, most people.</em></h1>
+ <p class="sub" id="subtitle"></p>
+ <p class="byline">A data story by <b>Iris Sun</b> · Statistics Canada 2021 Census</p>
+ <div class="stats" id="stats"></div>
+</div></header>
+
+<section><div class="wrap">
+ <h2>One province, two shapes</h2>
+ <p class="lede">Both maps use the same 29 census divisions and the same 1,000 blocks. On the left every block is an equal slice of B.C.’s <i>land</i>. On the right every block is an equal slice of its <i>people</i>. More blocks indicate a larger share of the total.</p>
+ <div class="row" id="row">
+  <div class="panel" id="p1"><h3>Land area</h3><p class="sub2" id="s1"></p><p class="tot" id="t1"></p><canvas id="c1"></canvas></div>
+  <div class="arrow">→</div>
+  <div class="panel" id="p2"><h3>Population</h3><p class="sub2" id="s2"></p><p class="tot" id="t2"></p><canvas id="c2"></canvas></div>
+ </div>
+ <p class="maphint">Hover over a region to highlight it on both maps, the chart and the table.</p>
+ <p class="maphint mapnote">Both maps contain 1,000 blocks, allocated from the exact shares using largest-remainder rounding with a one-block minimum per region. Metro Vancouver has 3 land blocks and 528 population blocks. Exact figures appear in the table.</p>
+</div></section>
+
+<section><div class="wrap">
+ <div class="chapters">
+  <div><h4>A sliver in the south</h4><p id="ch1"></p></div>
+  <div><h4>Vast regions, small population shares</h4><p id="ch2"></p></div>
+  <div><h4>Not empty, just spread out</h4><p id="ch3"></p></div>
+ </div>
+</div></section>
+
+<section><div class="wrap">
+ <h2>Who moves up, who moves down</h2>
+ <p class="lede">Rank the 29 regions by land area, then by population. Upward-sloping lines identify regions that rank higher by population than by land area.” Rank differences do not directly measure density. Lines that drop show regions with lots of land and few people.</p>
+ <div class="key"><span><i style="background:var(--accent)"></i>Ranks higher by people than by land</span><span><i style="background:var(--teal)"></i>Ranks lower by people than by land</span><span><i style="background:#b9b3a3"></i>About the same</span></div>
+ <div class="slopebox"><svg id="slope" role="img" aria-label="Slope chart comparing each region’s rank by land area with its rank by population"></svg></div>
+</div></section>
+
+<section><div class="wrap">
+ <h2>The full numbers</h2>
+ <p class="lede">Click a column heading to sort.</p>
+ <div class="tablebox"><table id="tbl"><thead><tr></tr></thead><tbody></tbody></table></div>
+</div></section>
+
+<section><div class="wrap narrow prose">
+ <h2>Why it matters</h2>
+ <p id="why1"></p>
+ <p>Housing, transit, health care, schools and jobs all look different in a region with hundreds of people per square kilometre than in one with fewer than one. Conventional maps emphasize land area, which can obscure how concentrated the population is. Population cartograms highlight where people are concentrate.</p>
+ <h2 style="margin-top:28px">About the data</h2>
+ <ul class="notes">
+  <li><b>Population:</b> Statistics Canada, 2021 Census of Population (5,000,879 people). Census divisions are B.C.’s regional districts, plus Northern Rockies and Stikine.</li>
+  <li><b>Outline and land area:</b> province outline from the Statistics Canada boundary file; division land areas are 2021 Census land-area figures (water excluded), which sum to the provincial land area of about 920,700 km².</li>
+  <li><b>Blocks:</b> both maps use 1,000 equal blocks. Land allocations use each region’s share of 920,685 km²; population allocations use its share of 5,000,879 residents. Largest-remainder rounding with a one-block minimum keeps all 29 regions visible and each map’s total at 1,000. Rounded block shares differ slightly from exact shares; the table provides both.</li>
+  <li><b>Land map:</b> the existing provincial silhouette is retained, with corrected regional block allocations. Division borders remain illustrative rather than survey-accurate. Coastal districts can have multiple parts; Mount Waddington and Strathcona include mainland territory as well as islands.</li>
+  <li><b>Population map:</b> a schematic population cartogram. The north is compressed, the southwest mainland expands, and Vancouver Island is shown separately. Districts associated with Vancouver Island are grouped on the schematic island, including their mainland populations where applicable. Positions, boundaries and neighbouring relationships are approximate. This is not a density-equalizing projection.</li>
+ </ul>
+</div></section>
+
+<footer><div class="wrap">
+ <div class="explain">
+  <h3>How to read this kind of map</h3>
+  <p class="intro">These are <b>gridded cartograms</b>, sometimes called block maps or tile grid maps. Instead of drawing each region at its real size, the whole province is split into equal blocks, 
+   and each region receives blocks according to its share of land area or population.</p>
+  <div class="xgrid">
+   <div><h4>Equal blocks</h4><p>Every block is the same size and stands for the same amount: 0.1% of B.C.’s land on the left map, and 0.1% of its people (about 5,000) on the right. A region’s size is simply how many blocks it has.</p></div>
+   <div><h4>Why not a normal map?</h4><p>A regular map shows land, so huge, thinly settled regions look important and small, crowded ones look minor. Equal blocks let every person count the same, so you can see where people actually live.</p></div>
+   <div><h4>How to compare</h4><p>Find a region on both maps. More blocks on the population map mean a larger share of people than of land. Metro Vancouver goes from 3 land blocks to 528 population blocks.</p></div>
+   <div><h4>What it can’t show</h4><p>A block is not a town or a place. Distances, shapes and regional borders are not to scale. The population layout preserves broad geographic relationships, but some adjacency changes and island-associated districts are grouped together. Use the maps for rounded shares and the table for exact figures.</p></div>
+  </div>
+ </div>
+ <p class="by">Created by <span>Iris Sun</span></p>
+ <p>Data storytelling and visualization. This project is a working example of how a complex dataset becomes a clear, shareable public story.</p>
+ <p class="cta" id="cta">Want a data story like this for your organization? Get in touch with Iris.</p>
+ <p class="challenge">A submission for the <b>#30DayMapChallenge 2026</b> · Day 9: <b>Urban–rural</b></p>
+ <p class="fine">© 2026 Iris Sun · Data: Statistics Canada, 2021 Census · Concept inspired by popgrid land-and-population maps.</p>
+</div></footer>
+<div id="tip"></div>
+<script>
+const CONTACT_URL=''; // add a link or mailto: here to turn the call to action into a link
+const DATA={"land":{"GW":51,"GH":41,"runs":[[0,23],[1,16],[-1,13],[0,5],[-1,2],[0,15],[1,16],[-1,14],[0,3],[-1,3],[0,15],[1,16],[-1,15],[0,1],[-1,5],[0,15],[1,15],[-1,23],[0,13],[1,13],[2,2],[-1,23],[0,12],[3,1],[1,10],[2,5],[-1,24],[0,9],[3,4],[1,5],[2,9],[-1,24],[0,8],[3,6],[1,1],[2,12],[-1,25],[0,5],[3,9],[2,12],[-1,26],[0,3],[3,10],[2,12],[-1,26],[0,2],[3,11],[2,12],[-1,26],[3,13],[2,12],[-1,28],[3,11],[2,12],[-1,29],[3,10],[2,12],[-1,30],[3,10],[2,11],[-1,30],[3,8],[5,3],[2,10],[-1,30],[3,7],[5,5],[2,5],[6,4],[-1,30],[3,5],[5,8],[2,1],[6,7],[-1,29],[3,5],[5,10],[6,7],[-1,29],[3,3],[5,12],[6,7],[-1,24],[4,2],[-1,4],[4,1],[5,13],[6,7],[-1,24],[4,3],[-1,2],[4,2],[5,12],[8,1],[6,7],[-1,24],[4,3],[-1,2],[4,2],[5,10],[8,5],[6,6],[-1,24],[4,2],[-1,3],[4,1],[7,3],[5,5],[8,8],[6,6],[-1,23],[4,2],[-1,5],[7,4],[5,2],[8,10],[6,4],[11,2],[-1,23],[4,2],[-1,4],[7,5],[8,12],[10,3],[11,3],[-1,23],[4,1],[-1,5],[7,4],[8,12],[10,3],[11,4],[-1,23],[7,1],[-1,5],[7,3],[8,11],[10,5],[11,4],[-1,28],[7,3],[8,11],[10,5],[11,5],[-1,27],[7,3],[22,2],[8,8],[10,7],[11,4],[-1,28],[7,1],[18,1],[22,3],[8,7],[10,7],[11,5],[-1,27],[18,3],[22,4],[8,2],[9,3],[10,7],[11,4],[12,2],[-1,25],[22,2],[-1,1],[18,2],[22,2],[23,2],[9,4],[10,6],[15,3],[13,2],[12,3],[-1,24],[22,4],[23,1],[22,1],[23,3],[9,5],[10,4],[15,3],[13,3],[12,4],[-1,24],[22,3],[23,6],[9,3],[20,2],[10,1],[16,2],[15,2],[13,4],[12,4],[-1,25],[22,1],[23,3],[24,1],[23,1],[19,1],[23,1],[9,2],[20,3],[17,1],[16,1],[17,2],[13,5],[12,4],[-1,26],[23,3],[24,1],[-1,1],[19,3],[9,1],[20,3],[17,3],[14,2],[13,4],[12,4],[-1,27],[25,3],[26,2],[-1,1],[21,2],[20,3],[17,3],[14,3],[13,3],[12,4],[-1,28],[25,3],[27,2],[-1,1],[21,1],[20,3],[17,2],[14,4],[13,3],[12,5],[-1,28],[25,1],[27,2],[28,1],[-1,49],[28,2],[-1,19]]},"pop":{"GW":64,"GH":46,"runs":[[0,1],[3,6],[4,3],[2,12],[1,1],[6,7],[-1,39],[3,2],[4,1],[18,4],[7,1],[5,8],[6,6],[-1,52],[9,7],[8,1],[6,4],[-1,56],[9,3],[8,3],[6,2],[-1,59],[8,4],[10,2],[-1,59],[8,3],[10,3],[-1,59],[8,1],[10,5],[11,1],[-1,57],[8,1],[10,5],[11,2],[-1,56],[19,1],[10,5],[11,3],[-1,55],[19,2],[10,4],[11,4],[-1,53],[19,3],[10,5],[21,1],[11,1],[-1,54],[21,12],[-1,51],[21,14],[-1,50],[21,16],[-1,47],[21,18],[-1,46],[21,20],[-1,43],[21,22],[-1,42],[21,24],[-1,40],[21,26],[-1,38],[21,29],[-1,35],[21,29],[15,2],[-1,22],[22,2],[23,1],[-1,9],[21,29],[15,3],[-1,20],[23,4],[-1,9],[21,29],[16,1],[15,3],[-1,18],[23,4],[24,1],[-1,9],[21,28],[16,2],[15,4],[-1,16],[25,2],[23,1],[24,3],[-1,9],[21,27],[16,4],[15,3],[-1,15],[25,2],[24,5],[-1,9],[21,26],[16,6],[15,2],[-1,15],[25,1],[24,4],[26,2],[-1,9],[21,24],[20,1],[16,7],[15,1],[16,1],[-1,14],[25,1],[24,1],[26,5],[-1,10],[21,23],[20,2],[16,9],[-1,13],[25,1],[26,7],[-1,10],[21,22],[20,4],[16,7],[13,1],[-1,13],[26,7],[27,1],[-1,10],[21,20],[20,6],[16,5],[13,2],[12,1],[-1,12],[26,6],[27,2],[-1,11],[21,18],[20,8],[17,1],[16,2],[13,3],[12,2],[-1,11],[26,4],[27,5],[-1,11],[21,17],[20,8],[17,3],[13,3],[12,2],[-1,12],[26,2],[27,4],[28,2],[-1,12],[21,16],[20,8],[17,4],[13,2],[12,2],[-1,12],[26,1],[27,4],[28,4],[-1,12],[21,14],[20,9],[17,4],[14,1],[13,1],[12,2],[-1,13],[27,2],[28,6],[-1,13],[21,13],[20,9],[17,3],[14,3],[12,2],[-1,13],[28,9],[-1,13],[21,11],[20,10],[17,3],[14,3],[12,2],[-1,14],[28,8],[-1,56],[28,8],[-1,57],[28,8],[-1,57],[28,7],[-1,58],[28,6],[-1,58],[28,7],[-1,58],[28,6],[-1,59],[28,5],[-1,60],[28,4],[-1,61],[28,3],[-1,40]]},"names":["Stikine Region","Northern Rockies","Peace River","Kitimat–Stikine","North Coast","Bulkley–Nechako","Fraser–Fort George","Central Coast","Cariboo","Squamish–Lillooet","Thompson–Nicola","Columbia–Shuswap","East Kootenay","Central Kootenay","Kootenay Boundary","North Okanagan","Central Okanagan","Okanagan–Similkameen","qathet","Sunshine Coast","Fraser Valley","Metro Vancouver","Mount Waddington","Strathcona","Comox Valley","Alberni–Clayoquot","Nanaimo","Cowichan Valley","Capital"],"col":[2,0,2,1,3,0,3,2,1,2,0,1,2,0,1,2,1,2,0,1,3,99,1,2,0,1,2,0,1],"popn":[683.0,4478.0,61532.0,37790.0,18181.0,37737.0,96979.0,3582.0,62931.0,50496.0,143680.0,57021.0,65896.0,62509.0,33152.0,91610.0,222162.0,90178.0,21496.0,32170.0,324005.0,2642825.0,10839.0,48150.0,72445.0,33521.0,170367.0,89013.0,415451.0],"area":[118409.0,84859.0,117217.0,104307.0,19710.0,73203.0,50581.0,24434.0,80374.0,16296.0,44347.0,28886.0,27514.0,22078.0,8081.0,7497.0,2902.0,10407.0,5068.0,3767.0,13319.0,2879.0,20186.0,18244.0,1697.0,6577.0,2036.0,3472.0,2338.0]};
+const N=DATA.names,NR=N.length,PAL=['#a8d4cb','#f3d58a','#b3cdea','#f2bb98','#cdb9dc','#bddca5','#f3b4be','#dccbad'],ACC='#d94f30',TEAL='#2a8f86';
+const color=i=>DATA.col[i]===99?ACC:PAL[DATA.col[i]%PAL.length];
+const POP=DATA.popn,AREA=DATA.area,totPop=POP.reduce((a,b)=>a+b,0),totArea=AREA.reduce((a,b)=>a+b,0);
+const f0=n=>Math.round(n).toLocaleString('en-CA'),pc=(n,d=1)=>n.toFixed(d)+'%';
+const MI=N.indexOf('Metro Vancouver');
+// ---- key numbers ----
+const byPop=[...Array(NR).keys()].sort((a,b)=>POP[b]-POP[a]),byLand=[...Array(NR).keys()].sort((a,b)=>AREA[b]-AREA[a]);
+const top4=byPop.slice(0,4),big5=byLand.slice(0,5);
+const sum=(ix,a)=>ix.reduce((s,i)=>s+a[i],0);
+const top4Pop=sum(top4,POP)/totPop*100,top4Land=sum(top4,AREA)/totArea*100,big5Land=sum(big5,AREA)/totArea*100,big5Pop=sum(big5,POP)/totPop*100;
+const dens=i=>POP[i]/AREA[i],sparse=[...Array(NR).keys()].sort((a,b)=>dens(a)-dens(b))[0];
+const metroPop=POP[MI]/totPop*100,metroLand=AREA[MI]/totArea*100,avgDens=totPop/totArea;
+const words=['zero','one','two','three','four','five','six','seven','eight','nine','ten'];
+const inTen=Math.round(top4Pop/10);
+document.getElementById('subtitle').textContent=(words[inTen]||inTen)[0].toUpperCase()+(words[inTen]||inTen).slice(1)+' in ten British Columbians live in just four regions that cover '+pc(top4Land)+' of the province. Two maps, drawn with the same 1,000 blocks, show the squeeze.';
+document.getElementById('stats').innerHTML=
+ '<div class="stat"><div class="n">'+pc(metroPop)+'</div><p>of British Columbians live in <b>Metro Vancouver</b>, which is just '+pc(metroLand)+' of the land.</p></div>'+
+ '<div class="stat"><div class="n">'+Math.round(top4Pop)+'%</div><p>live in only four regions: '+top4.map(i=>N[i]).join(', ').replace(/, ([^,]*)$/,' and $1')+'. Together they cover '+pc(top4Land)+' of the land.</p></div>'+
+ '<div class="stat t"><div class="n">'+Math.round(big5Land)+'%</div><p>of the land is in the five largest regions, which hold only '+pc(big5Pop)+' of the people.</p></div>'+
+ '<div class="stat t"><div class="n">'+f0(dens(MI))+' vs '+(dens(sparse)<0.01?dens(sparse).toFixed(3):dens(sparse).toFixed(2))+'</div><p>people per km² in Metro Vancouver versus the '+N[sparse]+'. The provincial average is '+avgDens.toFixed(1)+'.</p></div>';
+document.getElementById('ch1').textContent=top4.map(i=>N[i]).join(', ').replace(/, ([^,]*)$/,' and $1')+' hold '+Math.round(top4Pop)+'% of the population on '+pc(top4Land)+' of the land. In the population map, Metro Vancouver alone takes about half of the 1,000 blocks.';
+document.getElementById('ch2').textContent='The five largest regions by land, '+big5.map(i=>N[i]).join(', ').replace(/, ([^,]*)$/,' and $1')+', cover '+Math.round(big5Land)+'% of B.C. but are home to '+pc(big5Pop)+' of its people. On the population map they shrink to a few blocks each.';
+document.getElementById('ch3').textContent='A region with few blocks is not a region with nothing in it. Communities, industries and First Nations are spread across the north and interior. The map shows how many people live there, not how much the place matters.';
+document.getElementById('why1').textContent='B.C. is large, but its people are concentrated. If you spread the province’s '+f0(totPop)+' residents evenly across its land, you would get about '+avgDens.toFixed(1)+' people per square kilometre. In Metro Vancouver the real figure is about '+f0(dens(MI))+', roughly '+f0(dens(MI)/avgDens)+' times the average.';
+// ---- grids ----
+function dec(g){const o=new Int16Array(g.GW*g.GH);let k=0;for(const [v,n] of g.runs)for(let j=0;j<n;j++)o[k++]=v;return o}
+const G=[{g:DATA.land,o:dec(DATA.land),cv:document.getElementById('c1')},{g:DATA.pop,o:dec(DATA.pop),cv:document.getElementById('c2')}];
+const CS=14,PADC=1;let hi=-1;
+G.forEach(m=>{m.cnt=new Array(NR).fill(0);m.o.forEach(v=>{if(v>=0)m.cnt[v]++});
+ const w=(m.g.GW+2*PADC)*CS,h=(m.g.GH+2*PADC)*CS,d=Math.min(window.devicePixelRatio||1,2);m.d=d;m.cv.width=w*d;m.cv.height=h*d;m.w=w;m.h=h;m.ctx=m.cv.getContext('2d');
+ const {GW,GH}=m.g,seen=new Uint8Array(GW*GH);m.lab=new Array(NR).fill(null);
+ for(let s=0;s<GW*GH;s++){const r=m.o[s];if(r<0||seen[s])continue;const q=[s];seen[s]=1;let sx=0,sy=0,c=0;
+  while(q.length){const k=q.pop(),x=k%GW,y=(k/GW)|0;sx+=x;sy+=y;c++;
+   for(const [dx,dy] of [[1,0],[-1,0],[0,1],[0,-1]]){const nx=x+dx,ny=y+dy;if(nx<0||ny<0||nx>=GW||ny>=GH)continue;const kk=ny*GW+nx;if(!seen[kk]&&m.o[kk]===r){seen[kk]=1;q.push(kk)}}}
+  if(!m.lab[r]||c>m.lab[r].c)m.lab[r]={x:sx/c+.5,y:sy/c+.5,c};}
+});
+const tw=G[0].g.GW+G[1].g.GW+4;
+G[0].cv.parentNode.style.width=(G[0].g.GW+2)/tw*92+'%';
+G[1].cv.parentNode.style.width=(G[1].g.GW+2)/tw*92+'%';
+document.getElementById('s1').textContent='Every block = 0.1% of B.C.’s land (about '+f0(totArea/1000)+' km²)';
+document.getElementById('s2').textContent='Every block = 0.1% of B.C.’s people (about '+f0(totPop/1000)+' people)';
+document.getElementById('t1').textContent=f0(G[0].cnt.reduce((a,b)=>a+b,0))+' blocks';
+document.getElementById('t2').textContent=f0(G[1].cnt.reduce((a,b)=>a+b,0))+' blocks';
+function draw(m){const {ctx,g,o,d}=m,{GW,GH}=g;ctx.setTransform(d,0,0,d,0,0);ctx.clearRect(0,0,m.w,m.h);
+ for(let y=0;y<GH;y++)for(let x=0;x<GW;x++){const r=o[y*GW+x];if(r<0)continue;
+  ctx.globalAlpha=(hi<0||hi===r)?1:.22;ctx.fillStyle=color(r);ctx.fillRect((x+PADC)*CS,(y+PADC)*CS,CS+.5,CS+.5);
+  ctx.strokeStyle='rgba(255,255,255,.55)';ctx.lineWidth=.7;ctx.strokeRect((x+PADC)*CS+.35,(y+PADC)*CS+.35,CS-.7,CS-.7);}
+ ctx.globalAlpha=1;ctx.lineWidth=1.3;ctx.lineCap='round';
+ const at=(x,y)=>(x<0||y<0||x>=GW||y>=GH)?-1:o[y*GW+x];
+ ctx.strokeStyle='rgba(38,50,44,.55)';ctx.beginPath();
+ for(let y=0;y<GH;y++)for(let x=0;x<GW;x++){const r=at(x,y);if(r<0)continue;if(hi>=0&&hi!==r)continue;const X=(x+PADC)*CS,Y=(y+PADC)*CS;
+  if(at(x+1,y)!==r){ctx.moveTo(X+CS,Y);ctx.lineTo(X+CS,Y+CS)}if(at(x-1,y)!==r){ctx.moveTo(X,Y);ctx.lineTo(X,Y+CS)}
+  if(at(x,y+1)!==r){ctx.moveTo(X,Y+CS);ctx.lineTo(X+CS,Y+CS)}if(at(x,y-1)!==r){ctx.moveTo(X,Y);ctx.lineTo(X+CS,Y)}}
+ ctx.stroke();
+ if(hi>=0){ctx.globalAlpha=.3;ctx.beginPath();for(let y=0;y<GH;y++)for(let x=0;x<GW;x++){const r=at(x,y);if(r<0||r===hi)continue;const X=(x+PADC)*CS,Y=(y+PADC)*CS;
+  if(at(x+1,y)!==r){ctx.moveTo(X+CS,Y);ctx.lineTo(X+CS,Y+CS)}if(at(x-1,y)!==r){ctx.moveTo(X,Y);ctx.lineTo(X,Y+CS)}if(at(x,y+1)!==r){ctx.moveTo(X,Y+CS);ctx.lineTo(X+CS,Y+CS)}if(at(x,y-1)!==r){ctx.moveTo(X,Y);ctx.lineTo(X+CS,Y)}}ctx.stroke();ctx.globalAlpha=1}
+ ctx.textAlign='center';ctx.textBaseline='middle';
+ for(let r=0;r<NR;r++){const L=m.lab[r],c=m.cnt[r];if(!L||c<3)continue;const name=N[r],span=Math.sqrt(c)*CS*1.25+CS;
+  let fs=Math.min(c>150?28:c>40?16:12,Math.max(8,Math.sqrt(c)*2.6));
+  ctx.font='700 '+fs+'px system-ui,sans-serif';while(fs>7.5&&ctx.measureText(name).width>span){fs-=.5;ctx.font='700 '+fs+'px system-ui,sans-serif'}
+  if(ctx.measureText(name).width>span*1.15)continue;
+  ctx.globalAlpha=(hi<0||hi===r)?1:.3;ctx.fillStyle=DATA.col[r]===99?'#fff':'#1d2b24';
+  ctx.fillText(name,(L.x+PADC)*CS,(L.y+PADC)*CS);}
+ ctx.globalAlpha=1;}
+// ---- slope chart ----
+const rankLand=new Array(NR),rankPop=new Array(NR);byLand.forEach((i,k)=>rankLand[i]=k);byPop.forEach((i,k)=>rankPop[i]=k);
+const slopeCol=i=>i===MI?ACC:(rankLand[i]-rankPop[i]>=3?'#e68a6e':rankPop[i]-rankLand[i]>=3?TEAL:'#b9b3a3');
+const sl=document.getElementById('slope'),mq=window.matchMedia('(max-width:760px)');
+let slG=[],slReady=false;
+function renderSlope(){
+ const M=mq.matches,SW=M?366:980,ROW=M?36:25,TOP=M?58:66,SH=TOP+NR*ROW+16,XL=M?148:395,XR=M?218:585,FS=M?10.5:12.5,GAP=M?8:12;
+ let sv='<text x="'+(XL-(M?8:16))+'" y="'+(M?20:30)+'" text-anchor="end" font-weight="700" font-size="'+(M?12.5:15)+'" fill="#1d3a2f">'+(M?'By land area':'Rank by land area')+'</text><text x="'+(XR+(M?8:16))+'" y="'+(M?20:30)+'" font-weight="700" font-size="'+(M?12.5:15)+'" fill="#1d3a2f">'+(M?'By population':'Rank by population')+'</text>';
+ sv+='<text x="'+(XL-(M?8:16))+'" y="'+(M?36:48)+'" text-anchor="end" font-size="'+(M?10:11.5)+'" fill="#667568">'+(M?'largest → smallest':'largest → smallest, km²')+'</text><text x="'+(XR+(M?8:16))+'" y="'+(M?36:48)+'" font-size="'+(M?10:11.5)+'" fill="#667568">'+(M?'most → fewest':'most → fewest people')+'</text>';
+ [...Array(NR).keys()].sort((a,b)=>(a===MI)-(b===MI)).forEach(i=>{const yl=TOP+rankLand[i]*ROW+ROW/2,yr=TOP+rankPop[i]*ROW+ROW/2,c=slopeCol(i),w=i===MI?3.4:1.8,fw=i===MI?700:500;
+  let tl,tr;
+  if(M){
+   tl='<text x="'+(XL-GAP)+'" y="'+(yl-1)+'" text-anchor="end" font-size="'+FS+'" fill="#1d3a2f" font-weight="'+fw+'">'+(rankLand[i]+1)+'. '+N[i]+'</text><text x="'+(XL-GAP)+'" y="'+(yl+10)+'" text-anchor="end" font-size="9.5" fill="#667568">'+f0(AREA[i])+' km²</text>';
+   tr='<text x="'+(XR+GAP)+'" y="'+(yr-1)+'" font-size="'+FS+'" fill="#1d3a2f" font-weight="'+fw+'">'+(rankPop[i]+1)+'. '+N[i]+'</text><text x="'+(XR+GAP)+'" y="'+(yr+10)+'" font-size="9.5" fill="#667568">'+f0(POP[i])+' people</text>';
+  }else{
+   tl='<text x="'+(XL-GAP)+'" y="'+(yl+4)+'" text-anchor="end" font-size="'+FS+'" fill="#1d3a2f" font-weight="'+fw+'">'+(rankLand[i]+1)+'. '+N[i]+' <tspan fill="#667568" font-weight="400">· '+f0(AREA[i])+' km²</tspan></text>';
+   tr='<text x="'+(XR+GAP)+'" y="'+(yr+4)+'" font-size="'+FS+'" fill="#1d3a2f" font-weight="'+fw+'">'+(rankPop[i]+1)+'. '+N[i]+' <tspan fill="#667568" font-weight="400">· '+f0(POP[i])+'</tspan></text>';
+  }
+  sv+='<g data-i="'+i+'"><line x1="'+XL+'" y1="'+yl+'" x2="'+XR+'" y2="'+yr+'" stroke="'+c+'" stroke-width="'+w+'" stroke-linecap="round" opacity="'+(i===MI?1:.85)+'"/><circle cx="'+XL+'" cy="'+yl+'" r="'+(i===MI?5:3.6)+'" fill="'+c+'"/><circle cx="'+XR+'" cy="'+yr+'" r="'+(i===MI?5:3.6)+'" fill="'+c+'"/>'+tl+tr+
+  '<rect x="0" y="'+(Math.min(yl,yr)-ROW/2)+'" width="'+SW+'" height="'+(Math.abs(yl-yr)+ROW)+'" fill="transparent"/></g>';});
+ sl.classList.toggle('phone',M);sl.setAttribute('viewBox','0 0 '+SW+' '+SH);sl.innerHTML=sv;
+ slG=[...sl.querySelectorAll('g[data-i]')];
+ slG.forEach(g=>{const r=+g.dataset.i;
+  if(M){g.addEventListener('click',e=>{if(hi===r){setHi(-1);tip.style.display='none'}else{setHi(r);showTip(e,r)}})}
+  else{g.addEventListener('mousemove',e=>{setHi(r);showTip(e,r)});g.addEventListener('mouseleave',()=>{setHi(-1);tip.style.display='none'})}});
+ if(slReady)all();
+}
+renderSlope();
+if(mq.addEventListener)mq.addEventListener('change',renderSlope);else mq.addListener(renderSlope);
+// ---- table ----
+const COLS=[['Census division',i=>N[i],i=>N[i]],['Land (km²)',i=>f0(AREA[i]),i=>AREA[i]],['% of land',i=>pc(AREA[i]/totArea*100,2),i=>AREA[i]],['Population',i=>f0(POP[i]),i=>POP[i]],['% of people',i=>pc(POP[i]/totPop*100,2),i=>POP[i]],['People per km²',i=>dens(i)<1?dens(i).toFixed(3):dens(i)<10?dens(i).toFixed(1):f0(dens(i)),i=>dens(i)],['Land blocks',i=>G[0].cnt[i],i=>G[0].cnt[i]],['People blocks',i=>G[1].cnt[i],i=>G[1].cnt[i]]];
+let sortCol=3,sortDir=-1;const rows=[];
+const thr=document.querySelector('#tbl thead tr'),tb=document.querySelector('#tbl tbody');
+COLS.forEach((c,k)=>{const th=document.createElement('th');th.textContent=c[0];th.onclick=()=>{sortDir=(sortCol===k)?-sortDir:(k===0?1:-1);sortCol=k;build()};thr.appendChild(th)});
+function build(){tb.innerHTML='';rows.length=0;[...thr.children].forEach((th,k)=>th.classList.toggle('s',k===sortCol));
+ [...Array(NR).keys()].sort((a,b)=>{const x=COLS[sortCol][2](a),y=COLS[sortCol][2](b);return (x>y?1:x<y?-1:0)*sortDir}).forEach(i=>{const tr=document.createElement('tr');tr.dataset.i=i;
+  tr.innerHTML='<td><span class="sw" style="background:'+color(i)+'"></span>'+N[i]+'</td>'+COLS.slice(1).map(c=>'<td>'+c[1](i)+'</td>').join('');
+  tr.onmouseenter=()=>setHi(i);tr.onmouseleave=()=>setHi(-1);tb.appendChild(tr);rows.push(tr)});}
+build();
+// ---- interaction ----
+function all(){G.forEach(draw);rows.forEach(t=>t.classList.toggle('on',+t.dataset.i===hi));slG.forEach(g=>{g.style.opacity=(hi<0||+g.dataset.i===hi)?1:.12});}
+function setHi(i){if(i!==hi){hi=i;all()}}
+const tip=document.getElementById('tip');
+function showTip(e,r){if(r<0){tip.style.display='none';return}
+ tip.innerHTML='<b>'+N[r]+'</b><br>'+pc(AREA[r]/totArea*100)+' of land · '+pc(POP[r]/totPop*100)+' of people<br>'+f0(POP[r])+' people · '+f0(AREA[r])+' km²';
+ tip.style.display='block';tip.style.left=Math.min(e.clientX+14,innerWidth-250)+'px';tip.style.top=(e.clientY+14)+'px'}
+G.forEach(m=>{m.cv.addEventListener('mousemove',e=>{const b=m.cv.getBoundingClientRect(),x=Math.floor((e.clientX-b.left)/b.width*(m.g.GW+2*PADC))-PADC,y=Math.floor((e.clientY-b.top)/b.height*(m.g.GH+2*PADC))-PADC;
+  const r=(x>=0&&y>=0&&x<m.g.GW&&y<m.g.GH)?m.o[y*m.g.GW+x]:-1;setHi(r);showTip(e,r)});
+ m.cv.addEventListener('mouseleave',()=>{setHi(-1);tip.style.display='none'})});
+const cta=document.getElementById('cta');if(CONTACT_URL){cta.innerHTML='Want a data story like this for your organization? <a href="'+CONTACT_URL+'">Get in touch with Iris</a>.'}
+all();slReady=true;
+</script>
+</body>
+</html>
