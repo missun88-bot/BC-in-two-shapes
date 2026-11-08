@@ -238,11 +238,16 @@ function renderSlope(){
    tr='<text x="'+(XR+GAP)+'" y="'+(yr+4)+'" font-size="'+FS+'" fill="#1d3a2f" font-weight="'+fw+'">'+(rankPop[i]+1)+'. '+N[i]+' <tspan fill="#667568" font-weight="400">· '+f0(POP[i])+'</tspan></text>';
   }
   sv+='<g data-i="'+i+'"><line x1="'+XL+'" y1="'+yl+'" x2="'+XR+'" y2="'+yr+'" stroke="'+c+'" stroke-width="'+w+'" stroke-linecap="round" opacity="'+(i===MI?1:.85)+'"/><circle cx="'+XL+'" cy="'+yl+'" r="'+(i===MI?5:3.6)+'" fill="'+c+'"/><circle cx="'+XR+'" cy="'+yr+'" r="'+(i===MI?5:3.6)+'" fill="'+c+'"/>'+tl+tr+
-  '<rect x="0" y="'+(Math.min(yl,yr)-ROW/2)+'" width="'+SW+'" height="'+(Math.abs(yl-yr)+ROW)+'" fill="transparent"/></g>';});
+  (M?'<rect x="0" y="'+(yl-ROW/2)+'" width="'+(XL+6)+'" height="'+ROW+'" fill="transparent"/><rect x="'+(XR-6)+'" y="'+(yr-ROW/2)+'" width="'+(SW-XR+6)+'" height="'+ROW+'" fill="transparent"/><line x1="'+XL+'" y1="'+yl+'" x2="'+XR+'" y2="'+yr+'" stroke="transparent" stroke-width="9"/>':'<rect x="0" y="'+(Math.min(yl,yr)-ROW/2)+'" width="'+SW+'" height="'+(Math.abs(yl-yr)+ROW)+'" fill="transparent"/>')+'</g>';});
  sl.classList.toggle('phone',M);sl.setAttribute('viewBox','0 0 '+SW+' '+SH);sl.innerHTML=sv;
  slG=[...sl.querySelectorAll('g[data-i]')];
  slG.forEach(g=>{const r=+g.dataset.i;
-  if(M){g.addEventListener('click',e=>{if(hi===r){setHi(-1);tip.style.display='none'}else{setHi(r);showTip(e,r)}})}
+  if(M){
+   const hov=e=>{if(e.pointerType==='mouse'){setHi(r);showTip(e,r)}};
+   g.addEventListener('pointerenter',hov);g.addEventListener('pointermove',hov);
+   g.addEventListener('pointerleave',e=>{if(e.pointerType==='mouse'){setHi(-1);tip.style.display='none'}});
+   g.addEventListener('click',e=>{if(e.pointerType==='mouse')return;if(hi===r){setHi(-1);tip.style.display='none'}else{setHi(r);showTip(e,r)}});
+  }
   else{g.addEventListener('mousemove',e=>{setHi(r);showTip(e,r)});g.addEventListener('mouseleave',()=>{setHi(-1);tip.style.display='none'})}});
  if(slReady)all();
 }
