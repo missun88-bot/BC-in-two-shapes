@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<!-- build: slope-hover-tap v4 (pointerup+click, pointer-events=all) -->
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Big land, few people: where British Columbians live</title>
@@ -42,7 +43,8 @@ canvas{width:100%;height:auto;display:block}
 .chapters p{margin:0;font-size:15.5px;color:#34493e}
 .slopebox{overflow-x:auto;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 8px}
 #slope{display:block;min-width:820px;width:100%;height:auto}
-#slope.phone{min-width:0}
+#slope.phone{min-width:0;touch-action:manipulation}
+#slope.phone g[data-i]{cursor:pointer}
 @media(max-width:760px){.slopebox{overflow-x:visible;padding:8px 4px}#slope g[data-i]{-webkit-tap-highlight-color:transparent}}
 #slope g[data-i]{cursor:default;transition:opacity .15s}
 .key{display:flex;gap:18px;flex-wrap:wrap;font-size:13px;color:#34493e;margin:0 0 10px}
@@ -108,7 +110,7 @@ footer .fine{margin-top:22px;font-size:12px;color:#9db2a4;border-top:1px solid r
 
 <section><div class="wrap">
  <h2>Who moves up, who moves down</h2>
- <p class="lede">Rank the 29 regions by land area, then by population. Upward-sloping lines identify regions that rank higher by population than by land area.” Rank differences do not directly measure density. Lines that drop show regions with lots of land and few people.</p>
+ <p class="lede">Rank the 29 regions by land area, then by population. Upward-sloping lines identify regions that rank higher by population than by land area. Rank differences do not directly measure density. Lines that drop show regions with lots of land and few people.</p>
  <div class="key"><span><i style="background:var(--accent)"></i>Ranks higher by people than by land</span><span><i style="background:var(--teal)"></i>Ranks lower by people than by land</span><span><i style="background:#b9b3a3"></i>About the same</span></div>
  <div class="slopebox"><svg id="slope" role="img" aria-label="Slope chart comparing each region’s rank by land area with its rank by population"></svg></div>
 </div></section>
@@ -223,7 +225,7 @@ function draw(m){const {ctx,g,o,d}=m,{GW,GH}=g;ctx.setTransform(d,0,0,d,0,0);ctx
 const rankLand=new Array(NR),rankPop=new Array(NR);byLand.forEach((i,k)=>rankLand[i]=k);byPop.forEach((i,k)=>rankPop[i]=k);
 const slopeCol=i=>i===MI?ACC:(rankLand[i]-rankPop[i]>=3?'#e68a6e':rankPop[i]-rankLand[i]>=3?TEAL:'#b9b3a3');
 const sl=document.getElementById('slope'),mq=window.matchMedia('(max-width:760px)');
-let slG=[],slReady=false;
+let slG=[],slReady=false,lastTap=0;
 function renderSlope(){
  const M=mq.matches,SW=M?366:980,ROW=M?36:25,TOP=M?58:66,SH=TOP+NR*ROW+16,XL=M?148:395,XR=M?218:585,FS=M?10.5:12.5,GAP=M?8:12;
  let sv='<text x="'+(XL-(M?8:16))+'" y="'+(M?20:30)+'" text-anchor="end" font-weight="700" font-size="'+(M?12.5:15)+'" fill="#1d3a2f">'+(M?'By land area':'Rank by land area')+'</text><text x="'+(XR+(M?8:16))+'" y="'+(M?20:30)+'" font-weight="700" font-size="'+(M?12.5:15)+'" fill="#1d3a2f">'+(M?'By population':'Rank by population')+'</text>';
@@ -238,7 +240,7 @@ function renderSlope(){
    tr='<text x="'+(XR+GAP)+'" y="'+(yr+4)+'" font-size="'+FS+'" fill="#1d3a2f" font-weight="'+fw+'">'+(rankPop[i]+1)+'. '+N[i]+' <tspan fill="#667568" font-weight="400">· '+f0(POP[i])+'</tspan></text>';
   }
   sv+='<g data-i="'+i+'"><line x1="'+XL+'" y1="'+yl+'" x2="'+XR+'" y2="'+yr+'" stroke="'+c+'" stroke-width="'+w+'" stroke-linecap="round" opacity="'+(i===MI?1:.85)+'"/><circle cx="'+XL+'" cy="'+yl+'" r="'+(i===MI?5:3.6)+'" fill="'+c+'"/><circle cx="'+XR+'" cy="'+yr+'" r="'+(i===MI?5:3.6)+'" fill="'+c+'"/>'+tl+tr+
-  (M?'<rect x="0" y="'+(yl-ROW/2)+'" width="'+(XL+6)+'" height="'+ROW+'" fill="transparent"/><rect x="'+(XR-6)+'" y="'+(yr-ROW/2)+'" width="'+(SW-XR+6)+'" height="'+ROW+'" fill="transparent"/><line x1="'+XL+'" y1="'+yl+'" x2="'+XR+'" y2="'+yr+'" stroke="transparent" stroke-width="9"/>':'<rect x="0" y="'+(Math.min(yl,yr)-ROW/2)+'" width="'+SW+'" height="'+(Math.abs(yl-yr)+ROW)+'" fill="transparent"/>')+'</g>';});
+  '<rect x="0" y="'+(yl-ROW/2)+'" width="'+(XL+6)+'" height="'+ROW+'" fill="transparent" pointer-events="all"/><rect x="'+(XR-6)+'" y="'+(yr-ROW/2)+'" width="'+(SW-XR+6)+'" height="'+ROW+'" fill="transparent" pointer-events="all"/><line x1="'+XL+'" y1="'+yl+'" x2="'+XR+'" y2="'+yr+'" stroke="transparent" stroke-width="9" pointer-events="stroke"/></g>';});
  sl.classList.toggle('phone',M);sl.setAttribute('viewBox','0 0 '+SW+' '+SH);sl.innerHTML=sv;
  slG=[...sl.querySelectorAll('g[data-i]')];
  slG.forEach(g=>{const r=+g.dataset.i;
@@ -246,7 +248,9 @@ function renderSlope(){
    const hov=e=>{if(e.pointerType==='mouse'){setHi(r);showTip(e,r)}};
    g.addEventListener('pointerenter',hov);g.addEventListener('pointermove',hov);
    g.addEventListener('pointerleave',e=>{if(e.pointerType==='mouse'){setHi(-1);tip.style.display='none'}});
-   g.addEventListener('click',e=>{if(e.pointerType==='mouse')return;if(hi===r){setHi(-1);tip.style.display='none'}else{setHi(r);showTip(e,r)}});
+   const tog=e=>{if(hi===r){setHi(-1);tip.style.display='none'}else{setHi(r);showTip(e,r)}};
+   g.addEventListener('pointerup',e=>{if(e.pointerType==='mouse')return;lastTap=Date.now();tog(e)});
+   g.addEventListener('click',e=>{if(e.pointerType==='mouse'||Date.now()-lastTap<600)return;tog(e)});
   }
   else{g.addEventListener('mousemove',e=>{setHi(r);showTip(e,r)});g.addEventListener('mouseleave',()=>{setHi(-1);tip.style.display='none'})}});
  if(slReady)all();
